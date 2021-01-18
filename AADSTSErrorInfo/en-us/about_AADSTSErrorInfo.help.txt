@@ -1,0 +1,11 @@
+﻿TOPIC
+	about_AADSTSErrorInfo
+	
+SHORT DESCRIPTION
+	The AADSTSErrorInfo module provides an easy way to look up AADSTS error codes
+
+LONG DESCRIPTION
+	The AADSTSErrorInfo module provides an easy way to look up AADSTS error codes
+	
+KEYWORDS
+	AADSTS Errorcode AzureAD
