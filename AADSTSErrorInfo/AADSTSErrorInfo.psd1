@@ -9,7 +9,7 @@
 	GUID = '279fd865-b77f-4d5b-9dc6-b9dbb37a1ce1'
 	
 	# Author of this module
-	Author = 'AlexVerboon'
+	Author = 'Alex Verboon'
 	
 	# Company or vendor of this module
 	CompanyName = ''
@@ -18,7 +18,7 @@
 	Copyright = 'Copyright (c) 2021 AlexVerboon'
 	
 	# Description of the functionality provided by this module
-	Description = 'AADSTS error lookup tool'
+	Description = 'Azure AD Authentication and authorization error lookup tool'
 	
 	# Minimum version of the Windows PowerShell engine required by this module
 	PowerShellVersion = '5.0'
@@ -38,7 +38,7 @@
 	# FormatsToProcess = @('xml\AZADError.Format.ps1xml')
 	
 	# Functions to export from this module
-	FunctionsToExport = ''
+	FunctionsToExport = 'Get-AADSTSError'
 	
 	# Cmdlets to export from this module
 	CmdletsToExport = ''
@@ -59,13 +59,13 @@
 		PSData = @{
 			
 			# Tags applied to this module. These help with module discovery in online galleries.
-			# Tags = @()
+			Tags = @('AADSTS',"AzureAD","ErrorCode")
 			
 			# A URL to the license for this module.
-			# LicenseUri = ''
+			LicenseUri = 'https://github.com/alexverboon/AADSTSErrorInfo/blob/main/LICENSE'
 			
 			# A URL to the main website for this project.
-			# ProjectUri = ''
+			ProjectUri = 'https://github.com/alexverboon/AADSTSErrorInfo'
 			
 			# A URL to an icon representing this module.
 			# IconUri = ''
