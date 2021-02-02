@@ -27,22 +27,22 @@ List the included functions (currently there is just one)
 
 ```powershell
 get-command -Module AADSTSErrorInfo
-
 ```
 
 Lookup an error code
 
 ```powershell
 Get-AADSTSError -ErrorCode 50076 |fl
-
 ```
 
 When the error code is found the script returns the Error Code, Description and Remediation information
 
 ```powershell
 ErrorCode   : 50076
-Description : Due to a configuration change made by your administrator, or because you moved to a new location, you must use multi-factor authentication to access '{resource}'.
-Remediation : User needs to perform multi-factor authentication. There could be multiple things requiring multi-factor, e.g. Conditional Access policies, per-user enforcement, requested by client, among others.
+Description : Due to a configuration change made by your administrator, or because you moved to a new location, you
+              must use multi-factor authentication to access '{resource}'.
+Remediation : User needs to perform multi-factor authentication. There could be multiple things requiring
+              multi-factor, e.g. Conditional Access policies, per-user enforcement, requested by client, among others.
 ```
 
 ## Release Notes
