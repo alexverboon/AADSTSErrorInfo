@@ -3,7 +3,7 @@
 	RootModule = 'AADSTSErrorInfo.psm1'
 	
 	# Version number of this module.
-	ModuleVersion = '1.0.0'
+	ModuleVersion = '0.0.3'
 	
 	# ID used to uniquely identify this module
 	GUID = '279fd865-b77f-4d5b-9dc6-b9dbb37a1ce1'

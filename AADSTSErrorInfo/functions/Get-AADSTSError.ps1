@@ -29,6 +29,8 @@ function Get-AADSTSError{
 
     Begin
     {
+        $AllProtocols = [System.Net.SecurityProtocolType]'Tls,Tls11,Tls12,Tls13' 
+        [System.Net.ServicePointManager]::SecurityProtocol = $AllProtocols
         $Data = [System.Collections.ArrayList]::new()
         $Data.PSObject.TypeNames.Insert(0,'AADSTS.ErrorInfo')
         $uri  = "https://login.microsoftonline.com/error"
@@ -37,9 +39,45 @@ function Get-AADSTSError{
     Process
     {
         Try{
-            $request = Invoke-WebRequest -Uri $uri -Body $body -Method Post 
-            $result = @(Get-AADSTSHtmlInfo -page $request)
-            If($request.RawContent -like "*Code not found!*")
+            $request = Invoke-RestMethod -Uri $uri -Body $body -Method Post 
+            #credits for the web scraping hint - https://www.pipehow.tech/invoke-webscrape/            
+            $CodePattern = '<table><tr><td>Error Code</td><td>(?<Code>.*)</td></tr><tr><td>Message'
+            # pattern when the result includes Remediation info
+            $MessagePattern1 = '<tr><td>Message</td><td>(?<Message1>.*)</td></tr><tr><td>Remediation'
+            # pattern when there is no remediation info
+            $MessagePattern2 =  '<tr><td>Message</td><td>(?<Message2>.*)</td></tr></table></body>'
+            $RemediationPattern = '</td></tr><tr><td>Remediation</td><td>(?<Remediation>.*)</td></tr></table></body>'
+            $Patterns = "$CodePattern","$MessagePattern1","$MessagePattern2","$RemediationPattern"
+            $ResultData = forEach ($patt in $Patterns)
+            {
+                ($request | Select-String $patt -AllMatches).Matches
+            }
+
+            $OutMessage1 = $null
+            $OutMessage2 = $null
+            $OutRemediation = $null
+            $OutCode = $null
+
+            foreach ($result in $ResultData)
+            {
+                If (($result.Groups.Where{$_.Name -like 'Code'}).Value -notlike ""){
+                    $OutCode = ($result.Groups.Where{$_.Name -like 'Code'}).Value 
+                }
+
+                If (($result.Groups.Where{$_.Name -like 'Remediation'}).Value -notlike ""){
+                    $OutRemediation = ($result.Groups.Where{$_.Name -like 'Remediation'}).Value
+                }
+
+                If (($result.Groups.Where{$_.Name -like 'Message1'}).Value -notlike ""){
+                    $OutMessage1 = ($result.Groups.Where{$_.Name -like 'Message1'}).Value 
+                }
+
+                If (($result.Groups.Where{$_.Name -like 'Message2'}).Value -notlike ""){
+                    $OutMessage2 = ($result.Groups.Where{$_.Name -like 'Message2'}).Value 
+                }
+             }
+        
+            If($OutCode -like "")
             {
                 Write-Verbose "Error code: $ErrorCode not found" 
                 $object = [PSCustomObject]@{
@@ -55,14 +93,12 @@ function Get-AADSTSError{
                 Write-Verbose "Error code: $ErrorCode found" 
                 $object = [PSCustomObject]@{
                     PSTypeName  = "AADSTS.ErrorInfo"
-                    ErrorCode   = (($result.0).1)[0]
-                    Description = (($result.0).1)[1]
-                    Remediation = If ([string]::IsNullOrEmpty( (($result.0).1)[2])) {""} Else { (($result.0).1)[2] }
+                    ErrorCode   = $OutCode
+                    Description = If ($OutRemediation -notlike "") {$OutMessage1} Else {$OutMessage2}
+                    Remediation = $OutRemediation
                 }
                 [void]$Data.Add($object)
-                
             }
-        # $Data.PSObject.TypeNames.Insert(0,'AADSTS.ErrorInfo')
         $Data 
         }
         Catch{
